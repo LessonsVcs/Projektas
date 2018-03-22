@@ -1,4 +1,4 @@
-package menu;
+package menu.extras;
 
 public class PrintTable {
     public void printDescription(String name, String description){

@@ -1,4 +1,4 @@
-package menu.interfaces;
+package menu.extras;
 
 public interface LecturerInterface {
     abstract void editUser();

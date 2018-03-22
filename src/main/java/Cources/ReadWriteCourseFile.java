@@ -1,4 +1,4 @@
-package User;
+package Cources;
 
 import Cources.Course;
 
@@ -20,22 +20,24 @@ public class ReadWriteCourseFile {
                 BufferedReader br = new BufferedReader(new FileReader(this.file))
         ) {
             String line = br.readLine();
-            Integer index = 0 ;
-            Integer tempInt;
             while ((line= br.readLine()) != null){
                 String[] lines= line.split(";");
-                try {
-                    tempInt=Integer.parseInt(lines[2]);
-                }catch (Exception e){
-                    tempInt=null;
-                }
-                this.courses.put(index++,new Course(lines[0],lines[1],tempInt));
+                this.courses.put(Integer.parseInt(lines[2]),new Course(lines[0],lines[1],lines[2]));
             }
         } catch (Exception e){
             e.printStackTrace();
         }
     }
-    public void writeUserFile(){
+
+    public void setCourses(HashMap<Integer, Course> courses) {
+        this.courses = courses;
+    }
+
+    public HashMap<Integer, Course> getCourses() {
+        return courses;
+    }
+
+    public void writeCourseFile(){
         String lineToWrite;
         try (
                 BufferedWriter bw = new BufferedWriter(new FileWriter(this.file))
@@ -46,7 +48,7 @@ public class ReadWriteCourseFile {
     */
             System.out.println(this.courses.size());
             bw.write("name, description, ID \n");
-            for (int i = 0; i < this.courses.size(); i++) {
+            for (Integer i: courses.keySet()) {
                 lineToWrite = this.courses.get(i).getName() + ";" + this.courses.get(i).getDescription()
                 + ";" + this.courses.get(i).getCourseID();
                 bw.write(lineToWrite + "\n");

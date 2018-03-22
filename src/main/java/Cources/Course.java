@@ -1,21 +1,21 @@
-package User;
+package Cources;
 
 public class Course {
     private String  name;
     private String  description;
-    private Integer courseID;
+    private String  courseID;
 
-    Course(String name, String description, Integer courseID){
+    public Course(String name, String description, String courseID){
         this.name = name;
         this.description = description;
         this.courseID = courseID;
     }
 
-    public Integer getCourseID() {
+    public String getCourseID() {
         return courseID;
     }
 
-    public void setCourseID(Integer courseID) {
+    public void setCourseID(String courseID) {
         this.courseID = courseID;
     }
 

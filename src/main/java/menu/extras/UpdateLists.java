@@ -1,4 +1,4 @@
-package menu;
+package menu.extras;
 
 import Cources.Course;
 import Cources.ReadWriteCourseFile;
@@ -10,17 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 
 public class UpdateLists {
-     HashMap<Integer,List<String>> updateCourseRelations() {
+     public HashMap<Integer,List<String>> updateCourseRelations() {
         ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
         readWriteCourseRelation.ReadCourseRealation();
         return readWriteCourseRelation.getCourseRealtions();
      }
-     HashMap<Integer, User> updateUsers() {
+     public HashMap<Integer, User> updateUsers() {
      ReadWriteUserFile readWriteUserFile = new ReadWriteUserFile();
      readWriteUserFile.readUserFile();
      return readWriteUserFile.getUsers();
      }
-    HashMap<Integer, Course> updateCourses(){
+    public HashMap<Integer, Course> updateCourses(){
     ReadWriteCourseFile readWriteCourseFile = new ReadWriteCourseFile();
     readWriteCourseFile.readCoursefile();
     return readWriteCourseFile.getCourses();
