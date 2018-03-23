@@ -20,10 +20,9 @@ public class MenuForLecturer implements LecturerInterface,UserInterface {
 
             Scanner scanner = new Scanner(System.in);
             System.out.println("Select option");
-            System.out.println("1) create user      2) delete user      3) edit user      \n" +
-                    "4) delete course    5) create course    6) show user list \n" +
-                    "7) register user to course    8) remove user from course  \n" +
-                    "9) show course list 10)show course     11) Exit");
+            System.out.println("1) edit my profile      2) edit my courses     3) View all courses      \n" +
+                               "4) Create course        5) View users          6) Register to course    \n" +
+                               "7) Show course          8) Show my courses     9) Exit                  \n" );
 
             selectOperation(scanner);
         }
@@ -32,7 +31,17 @@ public class MenuForLecturer implements LecturerInterface,UserInterface {
     private void selectOperation(Scanner scanner) {
         switch (scanner.nextInt()){
             case 1:
+                editUser();
                 break;
+            case 2:
+                editCourses();
+                break;
+            case 3:
+                viewCourses();
+                break;
+
+            default:
+                System.out.println("Incorrect input");
         }
     }
 
