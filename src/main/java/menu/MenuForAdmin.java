@@ -454,9 +454,13 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.users = updateUsers();
         printTable.printDescription(courses.get(i).getName(),courses.get(i).getDescription());
         printTable.printCourseHeader();
-        for (String line: courseRealtions.get(i)) {
-            printTable.printCourse(users.get(Integer.parseInt(line)).getFirstName(),
-                    users.get(Integer.parseInt(line)).getLastName(),users.get(Integer.parseInt(line)).getRole().toString());
+        try {
+            for (String line : courseRealtions.get(i)) {
+                printTable.printCourse(users.get(Integer.parseInt(line)).getFirstName(),
+                        users.get(Integer.parseInt(line)).getLastName(), users.get(Integer.parseInt(line)).getRole().toString());
+            }
+        } catch (Exception e){
+            System.out.println("There's no one in course ");
         }
     }
 
