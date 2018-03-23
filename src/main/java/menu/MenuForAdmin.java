@@ -8,6 +8,8 @@ import User.ReadWriteUserFile;
 import User.User;
 import menu.extras.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class MenuForAdmin extends UpdateLists implements AdminInterface,LecturerInterface,UserInterface {
@@ -153,13 +155,64 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                 readWriteUserFile.setUsers(users);
                 readWriteUserFile.writeUserFile();
             } else if (input.equalsIgnoreCase("no")) {
-                /*
-                Express create
+                while (true){
+                    System.out.println("enter username");
+                    username = scanner.nextLine();
+                    if(checkName(username)){
+                        System.out.println("this username is already taken");
+                    } else {
+                        break;
+                    }
+                }
 
-                 */
-
-
-
+                System.out.println("enter password");
+                password = scanner.nextLine();
+                System.out.println("enter first name");
+                firstName = scanner.nextLine();
+                System.out.println("enter last name");
+                lastName = scanner.nextLine();
+                //Assign role from ENUM
+                while (true){
+                    System.out.println("enter role");
+                    String tmp = scanner.nextLine();
+                    if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
+                            tmp.equalsIgnoreCase("lecturer")){
+                        if(tmp.equalsIgnoreCase("admin")){
+                            role = Roles.ADMIN;
+                        }
+                        if(tmp.equalsIgnoreCase("lecturer")){
+                            role = Roles.LECTURER;
+                        }else{
+                            role = Roles.USER;
+                        }
+                        break;
+                    } else {
+                        System.out.println("this role doesn't exist");
+                    }
+                }
+                personalNumber = generateID();
+                System.out.println("enter email");
+                email = scanner.nextLine();
+                System.out.println("enter email");
+                address = scanner.nextLine();
+                while (true){
+                    System.out.println("enter new birth date. Year-Month-day Ex: 2000-10-10");
+                    try {
+                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                        dateOfBirth = format.parse(scanner.nextLine());
+                        break;
+                    }catch (Exception e){
+                        System.out.println("wrong input");
+                    }
+                }
+                try {
+                    users.put(personalNumber,new User(firstName,lastName,password,username,
+                            role, email, dateOfBirth, address,personalNumber.toString()));
+                }catch (Exception e){
+                    System.out.println(e);
+                }
+                readWriteUserFile.setUsers(users);
+                readWriteUserFile.writeUserFile();
             } else {
                 System.out.println("wrong input");
                 createUser();
