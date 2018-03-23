@@ -7,10 +7,9 @@ import User.EditProfile;
 import User.User;
 import menu.extras.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class MenuForLecturer extends UpdateLists implements LecturerInterface,UserInterface {
     private String myID;
@@ -19,10 +18,10 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
     private HashMap<Integer, User> users = new HashMap();
     private PrintTable printTable = new PrintTable();
     private boolean running= true;
+    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     MenuForLecturer(String myID){
         this.myID=myID;
     }
-
 
     @Override
     public void menu() {
@@ -37,7 +36,7 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
     }
 
     private void selectOperation(Scanner scanner) {
-        switch (scanner.nextInt()){
+        switch (Integer.parseInt(scanner.nextLine())){
             case 1:
                 editUser();
                 break;
@@ -68,10 +67,10 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         boolean canEdit = false;
         while (true) {
             System.out.println("Enter course id");
-            Integer input = scanner.nextInt();
+            String input = scanner.nextLine();
             //Checks if course exists
             for (Integer i : courses.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     courseFound = true;
                     try {
                         for (String line : courseRealtions.get(i)) {
@@ -104,7 +103,8 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         this.courses = updateCourses();
         printTable.printCoursesHeader();
         for (Integer i: courses.keySet()) {
-            printTable.printCoursesList(courses.get(i).getCourseID(),courses.get(i).getName(),courses.get(i).getDescription());
+            printTable.printCoursesList(courses.get(i).getCourseID(),courses.get(i).getName(),courses.get(i).getDescription(),
+                format.format(courses.get(i).getStartDate()));
         }
     }
 
@@ -117,6 +117,7 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         String name;
         String description;
         String courseID ;
+        Date startDate ;
         courseID = generateIDforCourse().toString();
 
         while (true){
@@ -135,7 +136,17 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         }
         System.out.println("Enter description");
         description = scanner.nextLine();
-        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID));
+        while (true){
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            System.out.println("Enter start date yyyy-MM-dd");
+            try {
+                startDate = format.parse(scanner.nextLine());
+                break;
+            }catch (Exception e){
+                System.out.println("Wrong format");
+            }
+        }
+        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate));
         readWriteCourseFile.setCourses(courses);
         readWriteCourseFile.writeCourseFile();
         List<String> list = new ArrayList<>();
@@ -165,12 +176,12 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         this.courses = updateCourses();
         System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
             //Checks if course exists
             for (Integer i : courses.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     courseFound = true;
                     checkIfUserExists(i);
                     break;
@@ -190,12 +201,12 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         this.users   = updateUsers();
         System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
             //Checks if course exists
             for (Integer i : courses.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     courseFound = true;
                     showSelectedCourse(i);
                     break;
@@ -214,12 +225,12 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
     private void checkIfUserExists(Integer courseID){
         System.out.println("Enter person id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String  input = scanner.nextLine();
         boolean found = false;
         while (true) {
             //Checks if user Exist
             for (Integer i : users.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     if(users.get(i).getRole()!= Roles.ADMIN){
                         found = true;
                         addToCourse(i,courseID);
@@ -321,9 +332,9 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         boolean running = true;
         //Menu for editing course
         while (running){
-            System.out.println("1) Change name 2) Change description 3) Exit");
-            int input = scanner.nextInt();
-            switch (input){
+            System.out.println("1) Change name 2) Change description 3) Change start Date 4) Exit");
+            String input = scanner.nextLine();
+            switch (Integer.parseInt(input)){
                 case 1:
                     System.out.println("Enter new name");
                     courses.get(id).setName(scanner.nextLine());
@@ -335,6 +346,9 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
                     changes= true;
                     break;
                 case 3:
+                    changes = changeDate(id, scanner);
+                    break;
+                case 4:
                     //Checks if anything changed, if so asks to save
                     if (changes){
                         running = toSaveCourseChanges(scanner);
@@ -348,6 +362,22 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
             }
         }
 
+    }
+
+    private boolean changeDate(Integer id, Scanner scanner) {
+        boolean changes;
+        while (true){
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            System.out.println("Enter start date yyyy-MM-dd");
+            try {
+                courses.get(id).setStartDate(format.parse(scanner.nextLine()));
+                changes=true;
+                break;
+            }catch (Exception e){
+                System.out.println("Wrong format");
+            }
+        }
+        return changes;
     }
 
     private boolean toSaveCourseChanges(Scanner scanner) {

@@ -1,2 +1,3 @@
-name, description, ID 
-MathI;Math for begginers;1
+name, description, ID, start date 
+MathI;Math for begginers;1;2017-01-01
+Chemistry;Chemistry 1;2;2018-04-01

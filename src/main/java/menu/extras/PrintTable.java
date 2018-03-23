@@ -21,20 +21,26 @@ public class PrintTable {
         System.out.format("+-----------------+-----------------+-----------------+%n");
     }
     public void printCoursesHeader(){
-        System.out.format("+------+---------------+------------------------------+%n");
-        System.out.format("|  ID  |   Name        |        Description           |%n");
-        System.out.format("+------+---------------+------------------------------+%n");
+        System.out.format("+------+---------------+------------------------------+---------------+%n");
+        System.out.format("|  ID  |   Name        |        Description           | Start date    |%n");
+        System.out.format("+------+---------------+------------------------------+---------------+%n");
     }
-    public void printCoursesList(String ID, String name, String description){
-        String leftAlignFormat = "| %-4s | %-13s | %-28s |%n";
-        System.out.format(leftAlignFormat,ID,name,description);
-        System.out.format("+------+---------------+------------------------------+%n");
+    public void printCoursesList(String ID, String name, String description, String date){
+        String leftAlignFormat = "| %-4s | %-13s | %-28s | %-13s |%n";
+        System.out.format(leftAlignFormat,ID,name,description,date);
+        System.out.format("+------+---------------+------------------------------+---------------+%n");
 
     }
     public void printUserHeader(){
         System.out.format("+------+---------------+------------------------------+%n");
-        System.out.format("|  ID  |   Name        |        Description           |%n");
+        System.out.format("|  ID  |   Name        |        Last name             |%n");
         System.out.format("+------+---------------+------------------------------+%n");
+    }
+    public void printUserList(String ID,String name, String lastName){
+        String leftAlignFormat = "|  %-3s | %-13s | %-28s |%n";
+        System.out.format(leftAlignFormat,ID,name,lastName);
+        System.out.format("+------+---------------+------------------------------+%n");
+
     }
 
 }

@@ -33,13 +33,13 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                     "7) register user to course    8) remove user from course  \n" +
                     "9) show course list 10)show course     11) Edit course    \n" +
                     "12)Exit");
-            selectOperation(scanner.nextInt());
+            selectOperation(scanner.nextLine());
         }
     }
 
-    private void selectOperation(int selected) {
+    private void selectOperation(String selected) {
         //Selecting operation from menu
-        switch (selected){
+        switch (Integer.parseInt(selected)){
             case 1:
                 createUser();
                 break;
@@ -293,7 +293,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         String description;
         String courseID ;
         courseID = generateIDforCourse().toString();
-
+        Date startDate= null;
         while (true){
             //checks if course name already exists
             System.out.println("Enter course name or 'exit' to leave");
@@ -306,11 +306,20 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
             } else {
                 break;
             }
-
+        }
+        while (true){
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            System.out.println("Enter start date yyyy-MM-dd");
+            try {
+                startDate = format.parse(scanner.nextLine());
+                break;
+            }catch (Exception e){
+                System.out.println("Wrong format");
+            }
         }
         System.out.println("Enter description");
         description = scanner.nextLine();
-        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID));
+        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate));
         readWriteCourseFile.setCourses(courses);
         readWriteCourseFile.writeCourseFile();
 
@@ -319,11 +328,10 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     @Override
     public void viewUsers() {
         //Prints out all users : ID, First name, Last name
-        updateUsers();
+        users = updateUsers();
         printTable.printUserHeader();
         for (Integer i: users.keySet()) {
-            System.out.println("ID: " + users.get(i).getPersonalNumber() +", Name: " + users.get(i).getFirstName()
-                + ", Last name: " + users.get(i).getLastName());
+            printTable.printUserList(users.get(i).getPersonalNumber(),users.get(i).getFirstName(),users.get(i).getLastName());
         }
 
     }
@@ -334,12 +342,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.courses = updateCourses();
         System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
             //Checks if course with that ID exists and removes
             for (Integer i : courses.keySet()) {
-                if(i==input){
+                if(i==Integer.valueOf(input)){
                     courseFound = true;
                     courses.remove(i);
                     readWriteCourseFile.writeCourseFile();
@@ -362,12 +370,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.users = updateUsers();
         System.out.println("Enter user id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean found =  false;
         while (true) {
             //Checks if user with that ID exist and removes
             for (Integer i : users.keySet()) {
-                if(i==input){
+                if(i==Integer.valueOf(input)){
                     found = true;
                     users.remove(i);
                     readWriteUserFile.writeUserFile();
@@ -390,12 +398,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.users = updateUsers();
         System.out.println("Enter user id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean found =  false;
         while (true) {
             //Checks if user exits
             for (Integer i : users.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     found = true;
                     editUserMenu.menu(i,users);
 
@@ -417,8 +425,10 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         //Prints out table : ID, Name, Description
         this.courses = updateCourses();
         printTable.printCoursesHeader();
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         for (Integer i: courses.keySet()) {
-            printTable.printCoursesList(courses.get(i).getCourseID(),courses.get(i).getName(),courses.get(i).getDescription());
+            printTable.printCoursesList(courses.get(i).getCourseID(),courses.get(i).getName(),courses.get(i).getDescription(),
+                format.format(courses.get(i).getStartDate()));
         }
 
     }
@@ -429,12 +439,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.users   = updateUsers();
         System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
             //Checks if course exists
             for (Integer i : courses.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     courseFound = true;
                     showSelectedCourse(i);
                     break;
@@ -471,12 +481,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.courses = updateCourses();
         System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
             //Checks if course exists
             for (Integer i : courses.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     courseFound = true;
                     checkIfUserExists(i);
                     break;
@@ -494,12 +504,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     private void checkIfUserExists(Integer courseID){
         System.out.println("Enter person id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean found = false;
         while (true) {
             //Checks if user Exist
             for (Integer i : users.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     found = true;
                     addToCourse(i,courseID);
                     break;
@@ -541,12 +551,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     private void checkIfUserExistsForRemove(Integer courseID){
         System.out.println("Enter person id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean found = false;
         while (true) {
             //Checks if user Exists
             for (Integer i : users.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     found = true;
                     removeFromCourse(i,courseID);
                     break;
@@ -591,11 +601,11 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.courses = updateCourses();
         System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
             for (Integer i : courses.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     courseFound = true;
                     checkIfUserExistsForRemove(i);
                     break;
@@ -614,12 +624,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         courses = updateCourses();
         System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        Integer input = scanner.nextInt();
+        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
             //Checks if course exists
             for (Integer i : courses.keySet()) {
-                if(i==input){
+                if(i==Integer.parseInt(input)){
                     courseFound = true;
                     editCourseMenu(i);
                     break;
@@ -640,9 +650,9 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         boolean running = true;
         //Menu for editing course
         while (running){
-            System.out.println("1) Change name 2) Change description 3) Exit");
-            int input = scanner.nextInt();
-            switch (input){
+            System.out.println("1) Change name 2) Change description 3) Change start Date 4) Exit");
+            String input = scanner.nextLine();
+            switch (Integer.parseInt(input)){
                 case 1:
                     System.out.println("Enter new name");
                     courses.get(id).setName(scanner.nextLine());
@@ -654,6 +664,9 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                     changes= true;
                     break;
                 case 3:
+                    changes = changeDate(id, scanner);
+                    break;
+                case 4:
                     //Checks if anything changed, if so asks to save
                     if (changes){
                         running = toSaveCourseChanges(scanner);
@@ -691,6 +704,22 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
             }
         }
         return running;
+    }
+
+    private boolean changeDate(Integer id, Scanner scanner) {
+        boolean changes;
+        while (true){
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            System.out.println("Enter start date yyyy-MM-dd");
+            try {
+                courses.get(id).setStartDate(format.parse(scanner.nextLine()));
+                changes=true;
+                break;
+            }catch (Exception e){
+                System.out.println("Wrong format");
+            }
+        }
+        return changes;
     }
 
 }

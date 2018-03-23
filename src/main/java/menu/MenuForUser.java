@@ -1,10 +1,11 @@
 package menu;
 
+import menu.extras.UpdateLists;
 import menu.extras.UserInterface;
 
 import java.util.Scanner;
 
-public class MenuForUser implements UserInterface {
+public class MenuForUser extends UpdateLists implements UserInterface {
     private boolean running = true;
     private String myID;
 
@@ -42,6 +43,7 @@ public class MenuForUser implements UserInterface {
 
     @Override
     public void register() {
+
 
     }
 

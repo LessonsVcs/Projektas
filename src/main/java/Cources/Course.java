@@ -1,22 +1,30 @@
 package Cources;
 
+import java.util.Date;
+
 public class Course {
     private String  name;
     private String  description;
     private String  courseID;
+    private Date startDate;
 
-    public Course(String name, String description, String courseID){
+    public Course(String name, String description, String courseID, Date startDate){
         this.name = name;
         this.description = description;
         this.courseID = courseID;
+        this.startDate = startDate;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public String getCourseID() {
         return courseID;
-    }
-
-    public void setCourseID(String courseID) {
-        this.courseID = courseID;
     }
 
     public String getName() {

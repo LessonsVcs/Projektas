@@ -17,20 +17,24 @@ public class EditUserMenu {
         boolean changes = false;
         Scanner scanner = new Scanner(System.in);
         System.out.println("Select what to edit");
-        System.out.println("1) first name    2) last name     3) password  " +
-                           "4) username      5) date of birth 6) email" +
-                           "7) address       8) change role" +
+        System.out.println("1) first name    2) last name     3) password  \n" +
+                           "4) username      5) date of birth 6) email     \n" +
+                           "7) address       8) change role                \n" +
                            "9) exit edit menu   ");
         while (running){
-            int input = scanner.nextInt();
-            switch (input){
+            String input = scanner.nextLine();
+            switch (Integer.parseInt(input)){
                 case 1:
                     System.out.println("Enter new name");
-                    users.get(id).setFirstName(scanner.nextLine());
+                    String name = scanner.nextLine();
+                    System.out.println(name);
+                    System.out.println(name.getClass());
+                    users.get(id).setFirstName(name);
                     changes= true;
                     break;
                 case 2:
                     System.out.println("Enter new last name");
+
                     users.get(id).setLastName(scanner.nextLine());
                     changes= true;
                     break;

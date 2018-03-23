@@ -6,11 +6,16 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 
 public class ReadWriteCourseFile {
     private String file;
+    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     private HashMap<Integer, Course> courses= new HashMap();
     public ReadWriteCourseFile(){
         this.file = "courses.csv";
@@ -22,7 +27,14 @@ public class ReadWriteCourseFile {
             String line = br.readLine();
             while ((line= br.readLine()) != null){
                 String[] lines= line.split(";");
-                this.courses.put(Integer.parseInt(lines[2]),new Course(lines[0],lines[1],lines[2]));
+                Date startDate = null;
+
+                try {
+                    startDate = format.parse(lines[3]);
+                }catch (Exception e){
+                    System.out.println(e);
+                }
+                this.courses.put(Integer.parseInt(lines[2]),new Course(lines[0],lines[1],lines[2],startDate));
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -46,11 +58,11 @@ public class ReadWriteCourseFile {
          String role, String email, Date dateOfBirth, Integer personalNumber,
          String address, StringArray courses){
     */
-            System.out.println(this.courses.size());
-            bw.write("name, description, ID \n");
+
+            bw.write("name, description, ID, start date \n");
             for (Integer i: courses.keySet()) {
                 lineToWrite = this.courses.get(i).getName() + ";" + this.courses.get(i).getDescription()
-                + ";" + this.courses.get(i).getCourseID();
+                + ";" + this.courses.get(i).getCourseID() + ";" + format.format(this.courses.get(i).getStartDate());
                 bw.write(lineToWrite + "\n");
             }
 
