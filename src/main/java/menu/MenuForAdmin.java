@@ -551,6 +551,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     }
 
     private boolean isAlreadyIncourse(Integer userID, Integer i) {
+
         for(String user: courseRealtions.get(i)){
             if (user.equalsIgnoreCase(userID.toString())){
                 return true;

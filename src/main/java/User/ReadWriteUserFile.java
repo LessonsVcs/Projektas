@@ -56,6 +56,7 @@ public class ReadWriteUserFile {
         }
     }
     public void writeUserFile(){
+        String date;
         String lineToWrite;
         try (
                 BufferedWriter bw = new BufferedWriter(new FileWriter(this.file))
@@ -64,12 +65,16 @@ public class ReadWriteUserFile {
          String role, String email, Date dateOfBirth, Integer personalNumber,
          String address, StringArray courses){
     */
-            System.out.println(users.size());
             bw.write("firstName, lastName, password, username, role, email, dateOfBirth, address, personalNumber \n");
             for (Integer i : users.keySet() ){
+                try {
+                    date = format.format(users.get(i).getDateOfBirth());
+                }catch (Exception e){
+                    date = null;
+                }
                 lineToWrite = users.get(i).getFirstName() + ";" + users.get(i).getLastName() + ";" +
                         users.get(i).getPassword() + ";" + users.get(i).getUsername() + ";" +
-                        users.get(i).getRole().toString() + ";" + users.get(i).getEmail() + ";" + format.format(users.get(i).getDateOfBirth())
+                        users.get(i).getRole().toString() + ";" + users.get(i).getEmail() + ";" + date
                          + ";" + users.get(i).getAddress() + ";" + users.get(i).getPersonalNumber();
                 bw.write(lineToWrite + "\n");
             }

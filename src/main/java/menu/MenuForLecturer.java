@@ -46,6 +46,24 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
             case 3:
                 viewCourses();
                 break;
+            case 4:
+                addCourse();
+                break;
+            case 5:
+                viewUsers();
+                break;
+            case 6:
+                register();
+                break;
+            case 7:
+                showCourse();
+                break;
+            case 8:
+                showMyCourses();
+                break;
+            case 9:
+                exit();
+                break;
 
             default:
                 System.out.println("Incorrect input");
@@ -108,6 +126,19 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         }
     }
 
+    private void showMyCourses(){
+        //Prints out table : ID, Name, Description
+        this.courses = updateCourses();
+        this.courseRealtions = updateCourseRelations();
+        printTable.printCoursesHeader();
+        for(Integer i :courseRealtions.keySet()){
+            if (courseRealtions.get(i).contains(myID)){
+                printTable.printCoursesList(courses.get(i).getCourseID(),courses.get(i).getName(),courses.get(i).getDescription(),
+                        format.format(courses.get(i).getStartDate()));
+            }
+        }
+    }
+
     @Override
     public void addCourse() {
         ReadWriteCourseFile readWriteCourseFile = new ReadWriteCourseFile();
@@ -160,11 +191,10 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
     @Override
     public void viewUsers() {
         //Prints out all users : ID, First name, Last name
-        updateUsers();
+        users = updateUsers();
         printTable.printUserHeader();
         for (Integer i: users.keySet()) {
-            System.out.println("ID: " + users.get(i).getPersonalNumber() +", Name: " + users.get(i).getFirstName()
-                    + ", Last name: " + users.get(i).getLastName());
+            printTable.printUserList(users.get(i).getPersonalNumber(),users.get(i).getFirstName(),users.get(i).getLastName());
         }
 
     }
@@ -183,7 +213,11 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
             for (Integer i : courses.keySet()) {
                 if(i==Integer.parseInt(input)){
                     courseFound = true;
-                    checkIfUserExists(i);
+                    if(!courseRealtions.get(i).contains(myID)){
+                        System.out.println("You can't register to not your courses");
+                    } else {
+                        checkIfUserExists(i);
+                    }
                     break;
                 }
             }
@@ -231,13 +265,13 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
             //Checks if user Exist
             for (Integer i : users.keySet()) {
                 if(i==Integer.parseInt(input)){
-                    if(users.get(i).getRole()!= Roles.ADMIN){
+                    if(users.get(i).getRole()!= Roles.ADMIN || users.get(i).getRole()!= Roles.LECTURER ){
                         found = true;
                         addToCourse(i,courseID);
                         break;
                     } else {
                         found = true;
-                        System.out.println("Can't add user with admin role");
+                        System.out.println("Can't add user with admin/lecturer role");
                     }
                 }
             }
@@ -287,27 +321,27 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
     }
 
     private void addToCourse(Integer userID, Integer courseID){
-        //Adds selected user to selected course
         boolean found = false;
-        while (true) {
-            for (Integer i : courseRealtions.keySet()) {
-                if(i==courseID){
-                    found = true;
+
+        for (Integer i : courseRealtions.keySet()) {
+            if(i==courseID){
+                found = true;
+                if(isAlreadyIncourse(userID, i)){
+                    System.out.println("User already is in this course");
+                } else {
                     courseRealtions.get(i).add(userID.toString());
-                    break;
                 }
-            }
-            if (found){
                 break;
-            } else {
-                List<String> list = new ArrayList<>();
-                list.add(userID.toString());
-                courseRealtions.put(courseID,list);
             }
-            ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
-            readWriteCourseRelation.setCourseRealtions(courseRealtions);
-            readWriteCourseRelation.writeCourseRealation();
         }
+        if (!found){
+            List<String> list = new ArrayList<>();
+            list.add(userID.toString());
+            courseRealtions.put(courseID,list);
+        }
+        ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
+        readWriteCourseRelation.setCourseRealtions(courseRealtions);
+        readWriteCourseRelation.writeCourseRealation();
     }
 
     private void showSelectedCourse(Integer i){
@@ -324,6 +358,15 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         } catch (Exception e){
             System.out.println("There's no one in course ");
         }
+    }
+
+    private boolean isAlreadyIncourse(Integer userID, Integer i) {
+        for(String user: courseRealtions.get(i)){
+            if (user.equalsIgnoreCase(userID.toString())){
+                return true;
+            }
+        }
+        return false;
     }
 
     private void editCourseMenu(Integer id){
@@ -354,7 +397,6 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
                         running = toSaveCourseChanges(scanner);
                     } else {
                         running = false;
-
                     }
                     break;
                 default:

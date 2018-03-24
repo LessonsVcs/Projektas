@@ -51,7 +51,6 @@ public class ReadWriteCourseRelation {
          String role, String email, Date dateOfBirth, Integer personalNumber,
          String address, StringArray courses){
     */
-            System.out.println(courseRealtions.size());
             bw.write("UserID, Courses IDs \n");
             for (Integer i: courseRealtions.keySet()) {
 
