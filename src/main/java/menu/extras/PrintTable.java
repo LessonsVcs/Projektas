@@ -21,14 +21,14 @@ public class PrintTable {
         System.out.format("+-----------------+-----------------+-----------------+%n");
     }
     public void printCoursesHeader(){
-        System.out.format("+------+---------------------+------------------------------+---------------+%n");
-        System.out.format("|  ID  |   Name              |        Description           | Start date    |%n");
-        System.out.format("+------+---------------------+------------------------------+---------------+%n");
+        System.out.format("+------+---------------------+------------------------------+--------+---------------+%n");
+        System.out.format("|  ID  |   Name              |        Description           |Credits |  Start date   |%n");
+        System.out.format("+------+---------------------+------------------------------+--------+---------------+%n");
     }
-    public void printCoursesList(String ID, String name, String description, String date){
-        String leftAlignFormat = "| %-4s | %-19s | %-28s | %-13s |%n";
-        System.out.format(leftAlignFormat,ID,name,description,date);
-        System.out.format("+------+---------------------+------------------------------+---------------+%n");
+    public void printCoursesList(String ID, String name, String description, String date, String credits){
+        String leftAlignFormat = "| %-4s | %-19s | %-28s | %-13s | %-6s |%n";
+        System.out.format(leftAlignFormat,ID,name,description,date,credits);
+        System.out.format("+------+---------------------+------------------------------+--------+---------------+%n");
 
     }
     public void printUserHeader(){

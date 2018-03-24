@@ -7,12 +7,22 @@ public class Course {
     private String  description;
     private String  courseID;
     private Date startDate;
+    private String credits;
 
-    public Course(String name, String description, String courseID, Date startDate){
+    public Course(String name, String description, String courseID, Date startDate, String credits){
         this.name = name;
         this.description = description;
         this.courseID = courseID;
         this.startDate = startDate;
+        this.credits = credits;
+    }
+
+    public String getCredits() {
+        return credits;
+    }
+
+    public void setCredits(String credits) {
+        this.credits = credits;
     }
 
     public Date getStartDate() {

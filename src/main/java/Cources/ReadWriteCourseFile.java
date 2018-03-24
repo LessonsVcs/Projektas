@@ -34,7 +34,7 @@ public class ReadWriteCourseFile {
                 }catch (Exception e){
                     System.out.println(e);
                 }
-                this.courses.put(Integer.parseInt(lines[2]),new Course(lines[0],lines[1],lines[2],startDate));
+                this.courses.put(Integer.parseInt(lines[2]),new Course(lines[0],lines[1],lines[2],startDate,lines[4]));
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -62,7 +62,8 @@ public class ReadWriteCourseFile {
             bw.write("name, description, ID, start date \n");
             for (Integer i: courses.keySet()) {
                 lineToWrite = this.courses.get(i).getName() + ";" + this.courses.get(i).getDescription()
-                + ";" + this.courses.get(i).getCourseID() + ";" + format.format(this.courses.get(i).getStartDate());
+                + ";" + this.courses.get(i).getCourseID() + ";" + format.format(this.courses.get(i).getStartDate())
+                + ";" + this.courses.get(i).getCredits();
                 bw.write(lineToWrite + "\n");
             }
 

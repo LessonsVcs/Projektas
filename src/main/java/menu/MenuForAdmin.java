@@ -292,8 +292,9 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         String name;
         String description;
         String courseID ;
+        String credits;
         courseID = generateIDforCourse().toString();
-        Date startDate= null;
+        Date startDate;
         while (true){
             //checks if course name already exists
             System.out.println("Enter course name or 'exit' to leave");
@@ -319,7 +320,9 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         }
         System.out.println("Enter description");
         description = scanner.nextLine();
-        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate));
+        System.out.println("Enter cedits");
+        credits = scanner.nextLine();
+        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate,credits));
         readWriteCourseFile.setCourses(courses);
         readWriteCourseFile.writeCourseFile();
 
@@ -428,7 +431,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         for (Integer i: courses.keySet()) {
             printTable.printCoursesList(courses.get(i).getCourseID(),courses.get(i).getName(),courses.get(i).getDescription(),
-                format.format(courses.get(i).getStartDate()));
+                format.format(courses.get(i).getStartDate()),courses.get(i).getCredits());
         }
 
     }
@@ -663,7 +666,8 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         boolean running = true;
         //Menu for editing course
         while (running){
-            System.out.println("1) Change name 2) Change description 3) Change start Date 4) Exit");
+            System.out.println("1) Change name 2) Change description 3) Change start Date \n" +
+                    "4)Change credits 5) Exit");
             String input = scanner.nextLine();
             switch (Integer.parseInt(input)){
                 case 1:
@@ -673,13 +677,17 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                     break;
                 case 2:
                     System.out.println("Enter new description");
-                    users.get(id).setLastName(scanner.nextLine());
+                    courses.get(id).setDescription(scanner.nextLine());
                     changes= true;
                     break;
                 case 3:
                     changes = changeDate(id, scanner);
                     break;
                 case 4:
+                    System.out.println("Enter new credits");
+                    courses.get(id).setCredits(scanner.nextLine());
+                    changes= true;
+                case 5:
                     //Checks if anything changed, if so asks to save
                     if (changes){
                         running = toSaveCourseChanges(scanner);

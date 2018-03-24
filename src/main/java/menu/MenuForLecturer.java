@@ -117,12 +117,12 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
 
     @Override
     public void viewCourses() {
-        //Prints out table : ID, Name, Description
+        //Prints out table : ID, Name, Description, start date
         this.courses = updateCourses();
         printTable.printCoursesHeader();
         for (Integer i: courses.keySet()) {
             printTable.printCoursesList(courses.get(i).getCourseID(),courses.get(i).getName(),courses.get(i).getDescription(),
-                format.format(courses.get(i).getStartDate()));
+                format.format(courses.get(i).getStartDate()),courses.get(i).getCredits());
         }
     }
 
@@ -134,7 +134,7 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         for(Integer i :courseRealtions.keySet()){
             if (courseRealtions.get(i).contains(myID)){
                 printTable.printCoursesList(courses.get(i).getCourseID(),courses.get(i).getName(),courses.get(i).getDescription(),
-                        format.format(courses.get(i).getStartDate()));
+                        format.format(courses.get(i).getStartDate()),courses.get(i).getCredits());
             }
         }
     }
@@ -149,6 +149,7 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         String description;
         String courseID ;
         Date startDate ;
+        String credits;
         courseID = generateIDforCourse().toString();
 
         while (true){
@@ -167,6 +168,8 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         }
         System.out.println("Enter description");
         description = scanner.nextLine();
+        System.out.println("Enter credits");
+        credits = scanner.nextLine();
         while (true){
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             System.out.println("Enter start date yyyy-MM-dd");
@@ -177,7 +180,7 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
                 System.out.println("Wrong format");
             }
         }
-        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate));
+        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate,credits));
         readWriteCourseFile.setCourses(courses);
         readWriteCourseFile.writeCourseFile();
         List<String> list = new ArrayList<>();
