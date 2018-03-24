@@ -17,13 +17,14 @@ public class EditProfile {
         boolean running = true;
         boolean changes = false;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Select what to edit");
-        System.out.println("1) first name     2) last name     3) password  \n" +
-                           "4) date of birth  5) email         6) address   \n" +
-                           "7) exit edit menu 8) change role"                  );
+
         while (running){
-            int input = scanner.nextInt();
-            switch (input){
+            System.out.println("Select what to edit");
+            System.out.println("1) first name     2) last name     3) password  \n" +
+                               "4) date of birth  5) email         6) address   \n" +
+                               "7) exit edit menu "                                );
+            String input = scanner.nextLine();
+            switch (Integer.parseInt(input)){
                 case 1:
                     System.out.println("Enter new name");
                     users.get(id).setFirstName(scanner.nextLine());

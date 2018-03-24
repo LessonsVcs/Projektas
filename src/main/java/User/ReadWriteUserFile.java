@@ -25,7 +25,7 @@ public class ReadWriteUserFile {
     public void setUsers(HashMap<Integer, User> users) {
         this.users = users;
     }
-
+    private DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     private HashMap<Integer,User> users = new HashMap();
     private String file;
     public ReadWriteUserFile(){
@@ -43,7 +43,7 @@ public class ReadWriteUserFile {
 //                line = br.readLine();
                 String[] lines= line.split(";");
                 try {
-                    DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
                     date = format.parse(lines[6]);
                 }catch (Exception e){
                     date = null;
@@ -69,11 +69,10 @@ public class ReadWriteUserFile {
             for (Integer i : users.keySet() ){
                 lineToWrite = users.get(i).getFirstName() + ";" + users.get(i).getLastName() + ";" +
                         users.get(i).getPassword() + ";" + users.get(i).getUsername() + ";" +
-                        users.get(i).getRole().toString() + ";" + users.get(i).getEmail() + ";" + users.get(i).getDateOfBirth()
+                        users.get(i).getRole().toString() + ";" + users.get(i).getEmail() + ";" + format.format(users.get(i).getDateOfBirth())
                          + ";" + users.get(i).getAddress() + ";" + users.get(i).getPersonalNumber();
                 bw.write(lineToWrite + "\n");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

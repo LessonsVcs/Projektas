@@ -527,26 +527,38 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     private void addToCourse(Integer userID, Integer courseID){
         //Adds selected user to selected course
         boolean found = false;
-        while (true) {
-            for (Integer i : courseRealtions.keySet()) {
-                if(i==courseID){
-                    found = true;
+
+        for (Integer i : courseRealtions.keySet()) {
+            if(i==courseID){
+                found = true;
+                if(isAlreadyIncourse(userID, i)){
+                    System.out.println("User already is in this course");
+                } else {
                     courseRealtions.get(i).add(userID.toString());
-                    break;
                 }
-            }
-            if (found){
                 break;
-            } else {
-                List<String> list = new ArrayList<>();
-                list.add(userID.toString());
-                courseRealtions.put(courseID,list);
             }
-            ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
-            readWriteCourseRelation.setCourseRealtions(courseRealtions);
-            readWriteCourseRelation.writeCourseRealation();
         }
+        if (!found){
+            List<String> list = new ArrayList<>();
+            list.add(userID.toString());
+            courseRealtions.put(courseID,list);
+        }
+        ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
+        readWriteCourseRelation.setCourseRealtions(courseRealtions);
+        readWriteCourseRelation.writeCourseRealation();
+
     }
+
+    private boolean isAlreadyIncourse(Integer userID, Integer i) {
+        for(String user: courseRealtions.get(i)){
+            if (user.equalsIgnoreCase(userID.toString())){
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private void checkIfUserExistsForRemove(Integer courseID){
         System.out.println("Enter person id");
@@ -659,7 +671,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                     changes= true;
                     break;
                 case 2:
-                    System.out.println("Enter new last name");
+                    System.out.println("Enter new description");
                     users.get(id).setLastName(scanner.nextLine());
                     changes= true;
                     break;
