@@ -1,10 +1,10 @@
 package menu;
 
-import Cources.Course;
-import Cources.ReadWriteCourseFile;
-import Cources.ReadWriteCourseRelation;
-import User.EditProfile;
-import User.User;
+import cources.Course;
+import cources.ReadWriteCourseFile;
+import cources.ReadWriteCourseRelation;
+import user.EditProfile;
+import user.User;
 import menu.extras.*;
 
 import java.text.DateFormat;
@@ -170,6 +170,20 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         description = scanner.nextLine();
         System.out.println("Enter credits");
         credits = scanner.nextLine();
+        startDate = getDate(scanner);
+        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate,credits));
+        readWriteCourseFile.setCourses(courses);
+        readWriteCourseFile.writeCourseFile();
+        List<String> list = new ArrayList<>();
+        list.add(myID.toString());
+        courseRealtions.put(Integer.parseInt(courseID),list);
+        ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
+        readWriteCourseRelation.setCourseRealtions(courseRealtions);
+        readWriteCourseRelation.writeCourseRealation();
+    }
+
+    private Date getDate(Scanner scanner) {
+        Date startDate;
         while (true){
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
             System.out.println("Enter start date yyyy-MM-dd");
@@ -180,15 +194,7 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
                 System.out.println("Wrong format");
             }
         }
-        courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate,credits));
-        readWriteCourseFile.setCourses(courses);
-        readWriteCourseFile.writeCourseFile();
-        List<String> list = new ArrayList<>();
-        list.add(myID.toString());
-        courseRealtions.put(Integer.parseInt(courseID),list);
-        ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
-        readWriteCourseRelation.setCourseRealtions(courseRealtions);
-        readWriteCourseRelation.writeCourseRealation();
+        return startDate;
     }
 
     @Override
@@ -207,12 +213,16 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
         this.courseRealtions = updateCourseRelations();
         this.users = updateUsers();
         this.courses = updateCourses();
-        System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+
         boolean courseFound =  false;
         while (true) {
+            System.out.println("Enter course id or exir");
+            String input = scanner.nextLine();
             //Checks if course exists
+            if(input.equalsIgnoreCase("exit")){
+                break;
+            }
             for (Integer i : courses.keySet()) {
                 if(i==Integer.parseInt(input)){
                     courseFound = true;
@@ -236,12 +246,16 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
     public void showCourse() {
         this.courses = updateCourses();
         this.users   = updateUsers();
-        System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+
         boolean courseFound =  false;
         while (true) {
             //Checks if course exists
+            System.out.println("Enter course id or exit");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             for (Integer i : courses.keySet()) {
                 if(i==Integer.parseInt(input)){
                     courseFound = true;
@@ -260,11 +274,15 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
     }
 
     private void checkIfUserExists(Integer courseID){
-        System.out.println("Enter person id");
         Scanner scanner = new Scanner(System.in);
-        String  input = scanner.nextLine();
+
         boolean found = false;
         while (true) {
+            System.out.println("Enter person id or exit");
+            String  input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             //Checks if user Exist
             for (Integer i : users.keySet()) {
                 if(i==Integer.parseInt(input)){
@@ -281,7 +299,7 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
             if (found){
                 break;
             }else {
-                System.out.println("User doesn't exist");
+                System.out.println("user doesn't exist");
             }
         }
 
@@ -330,7 +348,7 @@ public class MenuForLecturer extends UpdateLists implements LecturerInterface,Us
             if(i==courseID){
                 found = true;
                 if(isAlreadyIncourse(userID, i)){
-                    System.out.println("User already is in this course");
+                    System.out.println("user already is in this course");
                 } else {
                     courseRealtions.get(i).add(userID.toString());
                 }

@@ -1,6 +1,4 @@
-package Cources;
-
-import Cources.Course;
+package cources;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

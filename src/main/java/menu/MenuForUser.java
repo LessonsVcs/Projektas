@@ -1,9 +1,9 @@
 package menu;
 
-import Cources.Course;
-import Cources.ReadWriteCourseRelation;
-import User.ReadWriteUserFile;
-import User.User;
+import cources.Course;
+import cources.ReadWriteCourseRelation;
+import user.ReadWriteUserFile;
+import user.User;
 import menu.extras.PrintTable;
 import menu.extras.Roles;
 import menu.extras.UpdateLists;
@@ -83,12 +83,16 @@ public class MenuForUser extends UpdateLists implements UserInterface {
         this.users = updateUsers();
         this.courses = updateCourses();
         Date date =  Calendar.getInstance().getTime();
-        System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+
         boolean courseFound =  false;
         boolean lecturerFound = false;
         while (true) {
+            System.out.println("Enter person id or exit");
+            String  input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             //Checks if course exists
             for (Integer i : courses.keySet()) {
                 if(i==Integer.parseInt(input)){
@@ -96,22 +100,7 @@ public class MenuForUser extends UpdateLists implements UserInterface {
                     if(courseRealtions.get(i).contains(myID)){
                         System.out.println("You can't register to same course twice");
                     } else {
-                        if(isLecturerFound(lecturerFound, i)){
-                            if(courses.get(i).getStartDate().after(date)){
-                                if(countMyCredits()+Integer.parseInt(courses.get(i).getCredits())>=12){
-                                    System.out.println("you have to much credits to enroll this course");
-                                } else {
-                                    courseRealtions.get(i).add(myID);
-                                    ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
-                                    readWriteCourseRelation.setCourseRealtions(courseRealtions);
-                                    readWriteCourseRelation.writeCourseRealation();
-                                }
-                            } else {
-                                System.out.println("Can't register to already started course");
-                            }
-                        } else {
-                            System.out.println("Can't register to course without Lecturer");
-                        }
+                        registerToCourse(date, lecturerFound, i);
                     }
                     break;
                 }
@@ -123,6 +112,25 @@ public class MenuForUser extends UpdateLists implements UserInterface {
             }
         }
 
+    }
+
+    private void registerToCourse(Date date, boolean lecturerFound, Integer i) {
+        if(isLecturerFound(lecturerFound, i)){
+            if(courses.get(i).getStartDate().after(date)){
+                if(countMyCredits()+Integer.parseInt(courses.get(i).getCredits())>=12){
+                    System.out.println("you have to much credits to enroll this course");
+                } else {
+                    courseRealtions.get(i).add(myID);
+                    ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
+                    readWriteCourseRelation.setCourseRealtions(courseRealtions);
+                    readWriteCourseRelation.writeCourseRealation();
+                }
+            } else {
+                System.out.println("Can't register to already started course");
+            }
+        } else {
+            System.out.println("Can't register to course without Lecturer");
+        }
     }
 
     private void changePassword(){
@@ -141,7 +149,6 @@ public class MenuForUser extends UpdateLists implements UserInterface {
             if(users.get(Integer.parseInt(id)).getRole()== Roles.LECTURER){
                 lecturerFound=true;
             }
-
         }
         return lecturerFound;
     }
@@ -150,11 +157,15 @@ public class MenuForUser extends UpdateLists implements UserInterface {
     public void showCourse() {
         this.courses = updateCourses();
         this.users   = updateUsers();
-        System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+
         boolean courseFound =  false;
         while (true) {
+            System.out.println("Enter course id or exit");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             //Checks if course exists
             for (Integer i : courses.keySet()) {
                 if(i==Integer.parseInt(input)){

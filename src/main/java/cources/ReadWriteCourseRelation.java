@@ -1,4 +1,4 @@
-package Cources;
+package cources;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

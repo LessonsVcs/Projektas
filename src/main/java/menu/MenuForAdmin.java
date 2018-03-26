@@ -1,11 +1,11 @@
 package menu;
 
-import Cources.Course;
-import Cources.ReadWriteCourseFile;
-import Cources.ReadWriteCourseRelation;
-import User.EditUserMenu;
-import User.ReadWriteUserFile;
-import User.User;
+import cources.Course;
+import cources.ReadWriteCourseFile;
+import cources.ReadWriteCourseRelation;
+import user.EditUserMenu;
+import user.ReadWriteUserFile;
+import user.User;
 import menu.extras.*;
 
 import java.text.DateFormat;
@@ -110,15 +110,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         }else {
             if (input.equalsIgnoreCase("yes")) {
                 //Check if username is free
-                while (true){
-                    System.out.println("enter username");
-                    username = scanner.nextLine();
-                    if(checkName(username)){
-                        System.out.println("this username is already taken");
-                    } else {
-                        break;
-                    }
-                }
+                username = getUsername(scanner);
 
                 System.out.println("enter password");
                 password = scanner.nextLine();
@@ -127,24 +119,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                 System.out.println("enter last name");
                 lastName = scanner.nextLine();
                 //Assign role from ENUM
-                while (true){
-                    System.out.println("enter role");
-                    String tmp = scanner.nextLine();
-                    if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
-                            tmp.equalsIgnoreCase("lecturer")){
-                        if(tmp.equalsIgnoreCase("admin")){
-                            role = Roles.ADMIN;
-                        }
-                        if(tmp.equalsIgnoreCase("lecturer")){
-                            role = Roles.LECTURER;
-                        }else{
-                            role = Roles.USER;
-                        }
-                        break;
-                    } else {
-                        System.out.println("this role doesn't exist");
-                    }
-                }
+                role = getRoles(scanner);
                 personalNumber = generateID();
                 try {
                     users.put(personalNumber,new User(firstName,lastName,password,username,
@@ -155,15 +130,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                 readWriteUserFile.setUsers(users);
                 readWriteUserFile.writeUserFile();
             } else if (input.equalsIgnoreCase("no")) {
-                while (true){
-                    System.out.println("enter username");
-                    username = scanner.nextLine();
-                    if(checkName(username)){
-                        System.out.println("this username is already taken");
-                    } else {
-                        break;
-                    }
-                }
+                username = getUsername(scanner);
 
                 System.out.println("enter password");
                 password = scanner.nextLine();
@@ -172,39 +139,13 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                 System.out.println("enter last name");
                 lastName = scanner.nextLine();
                 //Assign role from ENUM
-                while (true){
-                    System.out.println("enter role");
-                    String tmp = scanner.nextLine();
-                    if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
-                            tmp.equalsIgnoreCase("lecturer")){
-                        if(tmp.equalsIgnoreCase("admin")){
-                            role = Roles.ADMIN;
-                        }
-                        if(tmp.equalsIgnoreCase("lecturer")){
-                            role = Roles.LECTURER;
-                        }else{
-                            role = Roles.USER;
-                        }
-                        break;
-                    } else {
-                        System.out.println("this role doesn't exist");
-                    }
-                }
+                role = getRoles(scanner);
                 personalNumber = generateID();
                 System.out.println("enter email");
                 email = scanner.nextLine();
                 System.out.println("enter email");
                 address = scanner.nextLine();
-                while (true){
-                    System.out.println("enter new birth date. Year-Month-day Ex: 2000-10-10");
-                    try {
-                        DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                        dateOfBirth = format.parse(scanner.nextLine());
-                        break;
-                    }catch (Exception e){
-                        System.out.println("wrong input");
-                    }
-                }
+                dateOfBirth = getBirthDate(scanner);
                 try {
                     users.put(personalNumber,new User(firstName,lastName,password,username,
                             role, email, dateOfBirth, address,personalNumber.toString()));
@@ -220,6 +161,58 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         }
 
 
+    }
+
+    private String getUsername(Scanner scanner) {
+        String username;
+        while (true){
+            System.out.println("enter username");
+            username = scanner.nextLine();
+            if(checkName(username)){
+                System.out.println("this username is already taken");
+            } else {
+                break;
+            }
+        }
+        return username;
+    }
+
+    private Roles getRoles(Scanner scanner) {
+        Roles role;
+        while (true){
+            System.out.println("enter role");
+            String tmp = scanner.nextLine();
+            if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
+                    tmp.equalsIgnoreCase("lecturer")){
+                if(tmp.equalsIgnoreCase("admin")){
+                    role = Roles.ADMIN;
+                }
+                if(tmp.equalsIgnoreCase("lecturer")){
+                    role = Roles.LECTURER;
+                }else{
+                    role = Roles.USER;
+                }
+                break;
+            } else {
+                System.out.println("this role doesn't exist");
+            }
+        }
+        return role;
+    }
+
+    private Date getBirthDate(Scanner scanner) {
+        Date dateOfBirth;
+        while (true){
+            System.out.println("enter new birth date. Year-Month-day Ex: 2000-10-10");
+            try {
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                dateOfBirth = format.parse(scanner.nextLine());
+                break;
+            }catch (Exception e){
+                System.out.println("wrong input");
+            }
+        }
+        return dateOfBirth;
     }
 
     private Integer generateID(){
@@ -343,11 +336,15 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     public void deleteCourse() {
         ReadWriteCourseFile readWriteCourseFile = new ReadWriteCourseFile();
         this.courses = updateCourses();
-        System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
+            System.out.println("Enter course id or exit");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
+
             //Checks if course with that ID exists and removes
             for (Integer i : courses.keySet()) {
                 if(i==Integer.valueOf(input)){
@@ -382,14 +379,14 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
                     found = true;
                     users.remove(i);
                     readWriteUserFile.writeUserFile();
-                    System.out.println("User removed");
+                    System.out.println("user removed");
                     break;
                 }
             }
             if (found){
                 break;
             }else {
-                System.out.println("User doesn't exist");
+                System.out.println("user doesn't exist");
             }
         }
 
@@ -399,12 +396,16 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     public void editUser() {
         EditUserMenu editUserMenu = new EditUserMenu();
         this.users = updateUsers();
-        System.out.println("Enter user id");
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+
         boolean found =  false;
         while (true) {
+            System.out.println("Enter user id or exit");
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
             //Checks if user exits
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             for (Integer i : users.keySet()) {
                 if(i==Integer.parseInt(input)){
                     found = true;
@@ -416,7 +417,8 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
             if (found){
                 break;
             }else {
-                System.out.println("User doesn't exist");
+                System.out.println("user doesn't exist");
+
             }
         }
 
@@ -440,11 +442,15 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     public void showCourse() {
         this.courses = updateCourses();
         this.users   = updateUsers();
-        System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+
         boolean courseFound =  false;
         while (true) {
+            System.out.println("Enter course id or exit");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             //Checks if course exists
             for (Integer i : courses.keySet()) {
                 if(i==Integer.parseInt(input)){
@@ -482,11 +488,15 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.courseRealtions = updateCourseRelations();
         this.users = updateUsers();
         this.courses = updateCourses();
-        System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+
         boolean courseFound =  false;
         while (true) {
+            System.out.println("Enter course id or exit");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             //Checks if course exists
             for (Integer i : courses.keySet()) {
                 if(i==Integer.parseInt(input)){
@@ -505,11 +515,15 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     }
 
     private void checkIfUserExists(Integer courseID){
-        System.out.println("Enter person id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+
         boolean found = false;
         while (true) {
+            System.out.println("Enter person id or exit");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             //Checks if user Exist
             for (Integer i : users.keySet()) {
                 if(i==Integer.parseInt(input)){
@@ -521,7 +535,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
             if (found){
                 break;
             }else {
-                System.out.println("User doesn't exist");
+                System.out.println("user doesn't exist");
             }
         }
 
@@ -535,7 +549,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
             if(i==courseID){
                 found = true;
                 if(isAlreadyIncourse(userID, i)){
-                    System.out.println("User already is in this course");
+                    System.out.println("user already is in this course");
                 } else {
                     courseRealtions.get(i).add(userID.toString());
                 }
@@ -565,11 +579,14 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
 
 
     private void checkIfUserExistsForRemove(Integer courseID){
-        System.out.println("Enter person id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
         boolean found = false;
         while (true) {
+            System.out.println("Enter person id or exit");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             //Checks if user Exists
             for (Integer i : users.keySet()) {
                 if(i==Integer.parseInt(input)){
@@ -581,7 +598,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
             if (found){
                 break;
             }else {
-                System.out.println("User doesn't exist");
+                System.out.println("user doesn't exist");
             }
         }
 
@@ -589,24 +606,23 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
 
     private void removeFromCourse(Integer userID, Integer courseID){
         boolean found = false;
-        while (true) {
-            for (Integer i : courseRealtions.keySet()) {
-                if(i==courseID){
-                    found = true;
-                    courseRealtions.get(i).remove(userID.toString());
-                    break;
-                }
-            }
-            if (found){
-                ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
-                readWriteCourseRelation.setCourseRealtions(courseRealtions);
-                readWriteCourseRelation.writeCourseRealation();
-                break;
-            } else {
-                System.out.println("Entered user isn't in this course");
-            }
 
+        for (Integer i : courseRealtions.keySet()) {
+            if(i==courseID){
+                found = true;
+                courseRealtions.get(i).remove(userID.toString());
+                break;
+            }
         }
+        if (found){
+            ReadWriteCourseRelation readWriteCourseRelation = new ReadWriteCourseRelation();
+            readWriteCourseRelation.setCourseRealtions(courseRealtions);
+            readWriteCourseRelation.writeCourseRealation();
+        } else {
+            System.out.println("Entered user isn't in this course");
+        }
+
+
     }
 
     @Override
@@ -619,30 +635,31 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         boolean courseFound =  false;
-        while (true) {
-            for (Integer i : courses.keySet()) {
-                if(i==Integer.parseInt(input)){
-                    courseFound = true;
-                    checkIfUserExistsForRemove(i);
-                    break;
-                }
-            }
-            if (courseFound){
+
+        for (Integer i : courses.keySet()) {
+            if(i==Integer.parseInt(input)){
+                courseFound = true;
+                checkIfUserExistsForRemove(i);
                 break;
-            }else {
-                System.out.println("Course doesn't exist");
             }
         }
+        if (!courseFound){
+            System.out.println("Course doesn't exist");
+        }
+
     }
 
     @Override
     public void editCourses() {
         courses = updateCourses();
-        System.out.println("Enter course id");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
         boolean courseFound =  false;
         while (true) {
+            System.out.println("Enter course id or exit");
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("exit")){
+                break;
+            }
             //Checks if course exists
             for (Integer i : courses.keySet()) {
                 if(i==Integer.parseInt(input)){

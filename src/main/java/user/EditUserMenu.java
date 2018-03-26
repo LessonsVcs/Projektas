@@ -1,4 +1,4 @@
-package User;
+package user;
 
 import menu.extras.Roles;
 import java.text.DateFormat;
@@ -145,6 +145,7 @@ public class EditUserMenu {
             String username = scanner.nextLine();
             if (checkName(username)){
                 System.out.println("this username already exist");
+                break;
             } else {
                 users.get(id).setUsername(username);
                 break;

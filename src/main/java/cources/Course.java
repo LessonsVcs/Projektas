@@ -1,4 +1,4 @@
-package Cources;
+package cources;
 
 import java.util.Date;
 

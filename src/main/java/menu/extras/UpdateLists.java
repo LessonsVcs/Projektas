@@ -1,10 +1,10 @@
 package menu.extras;
 
-import Cources.Course;
-import Cources.ReadWriteCourseFile;
-import Cources.ReadWriteCourseRelation;
-import User.ReadWriteUserFile;
-import User.User;
+import cources.Course;
+import cources.ReadWriteCourseFile;
+import cources.ReadWriteCourseRelation;
+import user.ReadWriteUserFile;
+import user.User;
 
 import java.util.HashMap;
 import java.util.List;
