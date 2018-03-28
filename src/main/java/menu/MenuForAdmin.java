@@ -12,7 +12,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class MenuForAdmin extends UpdateLists implements AdminInterface,LecturerInterface,UserInterface {
+import static menu.extras.UpdateLists.*;
+import static menu.extras.ScannerUntils.scanString;
+
+public class MenuForAdmin implements AdminInterface,LecturerInterface,UserInterface {
     private String myID;
     private boolean running = true;
     private HashMap<Integer,List<String>> courseRealtions = new HashMap<>();
@@ -26,14 +29,13 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     public void menu(){
         //Menu for selecting operation
         while (running) {
-            Scanner scanner = new Scanner(System.in);
             System.out.println("Select option");
             System.out.println("1) create user      2) delete user      3) edit user      \n" +
                     "4) delete course    5) create course    6) show user list \n" +
                     "7) register user to course    8) remove user from course  \n" +
                     "9) show course list 10)show course     11) Edit course    \n" +
                     "12)Exit");
-            selectOperation(scanner.nextLine());
+            selectOperation(ScannerUntils.scanString(""));
         }
     }
 
@@ -92,63 +94,32 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
 
         ReadWriteUserFile readWriteUserFile = new ReadWriteUserFile();
         this.users = updateUsers();
-        String username;
-        String password;
-        String firstName;
-        String lastName;
-        Roles role;
-        String email = null;
-        Date dateOfBirth  = null;
-        Integer personalNumber;
-        String address = null;
-        System.out.println("Create simple user? Yes/No or exit");
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        User newUser = new User();
+        String input = ScannerUntils.scanString("Create simple user? Yes/No or exit");
         //Create user simple or express. Simple doesn't have: email, dateOfBirth, address,
         if (input.equalsIgnoreCase("exit")){
             return;
         }else {
             if (input.equalsIgnoreCase("yes")) {
                 //Check if username is free
-                username = getUsername(scanner);
-
-                System.out.println("enter password");
-                password = scanner.nextLine();
-                System.out.println("enter first name");
-                firstName = scanner.nextLine();
-                System.out.println("enter last name");
-                lastName = scanner.nextLine();
-                //Assign role from ENUM
-                role = getRoles(scanner);
-                personalNumber = generateID();
+                newUser = basicUserCreation(newUser);
+                newUser.setDateOfBirth(null);
+                newUser.setAddress(null);
+                newUser.setEmail(null);
                 try {
-                    users.put(personalNumber,new User(firstName,lastName,password,username,
-                                role, email, dateOfBirth, address,personalNumber.toString()));
+                    users.put(Integer.parseInt(newUser.getPersonalNumber()),newUser);
                 }catch (Exception e){
                     System.out.println(e);
                 }
                 readWriteUserFile.setUsers(users);
                 readWriteUserFile.writeUserFile();
             } else if (input.equalsIgnoreCase("no")) {
-                username = getUsername(scanner);
-
-                System.out.println("enter password");
-                password = scanner.nextLine();
-                System.out.println("enter first name");
-                firstName = scanner.nextLine();
-                System.out.println("enter last name");
-                lastName = scanner.nextLine();
-                //Assign role from ENUM
-                role = getRoles(scanner);
-                personalNumber = generateID();
-                System.out.println("enter email");
-                email = scanner.nextLine();
-                System.out.println("enter email");
-                address = scanner.nextLine();
-                dateOfBirth = getBirthDate(scanner);
+                newUser = basicUserCreation(newUser);
+                newUser.setEmail(ScannerUntils.scanString("enter email"));
+                newUser.setAddress(ScannerUntils.scanString("enter address"));
+                newUser.setDateOfBirth(getBirthDate());
                 try {
-                    users.put(personalNumber,new User(firstName,lastName,password,username,
-                            role, email, dateOfBirth, address,personalNumber.toString()));
+                    users.put(Integer.parseInt(newUser.getPersonalNumber()),newUser);
                 }catch (Exception e){
                     System.out.println(e);
                 }
@@ -163,11 +134,22 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
 
     }
 
-    private String getUsername(Scanner scanner) {
+    private User basicUserCreation(User newUser) {
+        newUser.setUsername(getUsername());
+        newUser.setPassword(ScannerUntils.scanString("enter password"));
+        newUser.setFirstName(ScannerUntils.scanString("enter first name"));
+        newUser.setLastName(ScannerUntils.scanString("enter last name"));
+        //Assign role from ENUM
+        newUser.setRole(getRoles());
+        newUser.setPersonalNumber(generateID().toString());
+        return newUser;
+    }
+
+    private String getUsername() {
         String username;
         while (true){
-            System.out.println("enter username");
-            username = scanner.nextLine();
+            System.out.println();
+            username = ScannerUntils.scanString("enter username");
             if(checkName(username)){
                 System.out.println("this username is already taken");
             } else {
@@ -177,11 +159,11 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         return username;
     }
 
-    private Roles getRoles(Scanner scanner) {
+    private Roles getRoles() {
         Roles role;
         while (true){
-            System.out.println("enter role");
-            String tmp = scanner.nextLine();
+            System.out.println();
+            String tmp = ScannerUntils.scanString("enter role");
             if(tmp.equalsIgnoreCase("admin") || tmp.equalsIgnoreCase("user") ||
                     tmp.equalsIgnoreCase("lecturer")){
                 if(tmp.equalsIgnoreCase("admin")){
@@ -200,13 +182,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         return role;
     }
 
-    private Date getBirthDate(Scanner scanner) {
+    private Date getBirthDate() {
         Date dateOfBirth;
         while (true){
-            System.out.println("enter new birth date. Year-Month-day Ex: 2000-10-10");
             try {
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                dateOfBirth = format.parse(scanner.nextLine());
+                dateOfBirth = format.parse(ScannerUntils.scanString("enter new birth date. Year-Month-day Ex: 2000-10-10"));
                 break;
             }catch (Exception e){
                 System.out.println("wrong input");
@@ -281,7 +262,6 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     public void addCourse() {
         ReadWriteCourseFile readWriteCourseFile = new ReadWriteCourseFile();
         this.courses = updateCourses();
-        Scanner scanner = new Scanner(System.in);
         String name;
         String description;
         String courseID ;
@@ -290,8 +270,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         Date startDate;
         while (true){
             //checks if course name already exists
-            System.out.println("Enter course name or 'exit' to leave");
-            name = scanner.nextLine();
+            name = ScannerUntils.scanString("Enter course name or 'exit' to leave");
             if (name.equalsIgnoreCase("exit")){
                 return;
             }
@@ -303,18 +282,15 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         }
         while (true){
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            System.out.println("Enter start date yyyy-MM-dd");
             try {
-                startDate = format.parse(scanner.nextLine());
+                startDate = format.parse(ScannerUntils.scanString("Enter start date yyyy-MM-dd"));
                 break;
             }catch (Exception e){
                 System.out.println("Wrong format");
             }
         }
-        System.out.println("Enter description");
-        description = scanner.nextLine();
-        System.out.println("Enter cedits");
-        credits = scanner.nextLine();
+        description = ScannerUntils.scanString("Enter description");
+        credits = ScannerUntils.scanString("Enter credits");
         courses.put(Integer.parseInt(courseID),new Course(name,description,courseID,startDate,credits));
         readWriteCourseFile.setCourses(courses);
         readWriteCourseFile.writeCourseFile();
@@ -336,11 +312,9 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     public void deleteCourse() {
         ReadWriteCourseFile readWriteCourseFile = new ReadWriteCourseFile();
         this.courses = updateCourses();
-        Scanner scanner = new Scanner(System.in);
         boolean courseFound =  false;
         while (true) {
-            System.out.println("Enter course id or exit");
-            String input = scanner.nextLine();
+            String input = ScannerUntils.scanString("Enter course id or exit");
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -368,11 +342,10 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     public void deleteUser() {
         ReadWriteUserFile readWriteUserFile = new ReadWriteUserFile();
         this.users = updateUsers();
-        System.out.println("Enter user id");
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        System.out.println();
         boolean found =  false;
         while (true) {
+            String input = ScannerUntils.scanString("Enter user id");
             //Checks if user with that ID exist and removes
             for (Integer i : users.keySet()) {
                 if(i==Integer.valueOf(input)){
@@ -399,9 +372,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
 
         boolean found =  false;
         while (true) {
-            System.out.println("Enter user id or exit");
-            Scanner scanner = new Scanner(System.in);
-            String input = scanner.nextLine();
+            String input = ScannerUntils.scanString("Enter user id or exit");
             //Checks if user exits
             if (input.equalsIgnoreCase("exit")){
                 break;
@@ -442,12 +413,10 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     public void showCourse() {
         this.courses = updateCourses();
         this.users   = updateUsers();
-        Scanner scanner = new Scanner(System.in);
 
         boolean courseFound =  false;
         while (true) {
-            System.out.println("Enter course id or exit");
-            String input = scanner.nextLine();
+            String input = ScannerUntils.scanString("Enter course id or exit");
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -488,12 +457,10 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.courseRealtions = updateCourseRelations();
         this.users = updateUsers();
         this.courses = updateCourses();
-        Scanner scanner = new Scanner(System.in);
 
         boolean courseFound =  false;
         while (true) {
-            System.out.println("Enter course id or exit");
-            String input = scanner.nextLine();
+            String input = ScannerUntils.scanString("Enter course id or exit");
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -515,12 +482,10 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     }
 
     private void checkIfUserExists(Integer courseID){
-        Scanner scanner = new Scanner(System.in);
 
         boolean found = false;
         while (true) {
-            System.out.println("Enter person id or exit");
-            String input = scanner.nextLine();
+            String input = ScannerUntils.scanString("Enter person id or exit");
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -579,11 +544,9 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
 
 
     private void checkIfUserExistsForRemove(Integer courseID){
-        Scanner scanner = new Scanner(System.in);
         boolean found = false;
         while (true) {
-            System.out.println("Enter person id or exit");
-            String input = scanner.nextLine();
+            String input = ScannerUntils.scanString("Enter person id or exit");
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -631,9 +594,7 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         this.courseRealtions = updateCourseRelations();
         this.users = updateUsers();
         this.courses = updateCourses();
-        System.out.println("Enter course id");
-        Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        String input = ScannerUntils.scanString("Enter course id");
         boolean courseFound =  false;
 
         for (Integer i : courses.keySet()) {
@@ -652,11 +613,10 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     @Override
     public void editCourses() {
         courses = updateCourses();
-        Scanner scanner = new Scanner(System.in);
         boolean courseFound =  false;
         while (true) {
-            System.out.println("Enter course id or exit");
-            String input = scanner.nextLine();
+            System.out.println();
+            String input = ScannerUntils.scanString("Enter course id or exit");
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -678,36 +638,32 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
     }
 
     private void editCourseMenu(Integer id){
-        Scanner scanner = new Scanner(System.in);
+
         boolean changes = false;
         boolean running = true;
         //Menu for editing course
         while (running){
-            System.out.println("1) Change name 2) Change description 3) Change start Date \n" +
+            String input = ScannerUntils.scanString("1) Change name 2) Change description 3) Change start Date \n" +
                     "4)Change credits 5) Exit");
-            String input = scanner.nextLine();
             switch (Integer.parseInt(input)){
                 case 1:
-                    System.out.println("Enter new name");
-                    courses.get(id).setName(scanner.nextLine());
+                    courses.get(id).setName(ScannerUntils.scanString("Enter new name"));
                     changes= true;
                     break;
                 case 2:
-                    System.out.println("Enter new description");
-                    courses.get(id).setDescription(scanner.nextLine());
+                    courses.get(id).setDescription(ScannerUntils.scanString("Enter new description"));
                     changes= true;
                     break;
                 case 3:
-                    changes = changeDate(id, scanner);
+                    changes = changeDate(id);
                     break;
                 case 4:
-                    System.out.println("Enter new credits");
-                    courses.get(id).setCredits(scanner.nextLine());
+                    courses.get(id).setCredits(ScannerUntils.scanString("Enter new credits"));
                     changes= true;
                 case 5:
                     //Checks if anything changed, if so asks to save
                     if (changes){
-                        running = toSaveCourseChanges(scanner);
+                        running = toSaveCourseChanges();
                     } else {
                       running = false;
 
@@ -720,12 +676,11 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
 
     }
 
-    private boolean toSaveCourseChanges(Scanner scanner) {
+    private boolean toSaveCourseChanges() {
         //Asks if user wants to save changes
         boolean running;
         while (true){
-            System.out.println("Changes are made, do you want to save? Yes/No");
-            String response = scanner.nextLine();
+            String response = ScannerUntils.scanString("Changes are made, do you want to save? Yes/No");
             if (response.equalsIgnoreCase("yes") || response.equalsIgnoreCase("no")){
                 running = false;
                 if (response.equalsIgnoreCase("yes")){
@@ -744,13 +699,12 @@ public class MenuForAdmin extends UpdateLists implements AdminInterface,Lecturer
         return running;
     }
 
-    private boolean changeDate(Integer id, Scanner scanner) {
+    private boolean changeDate(Integer id) {
         boolean changes;
         while (true){
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            System.out.println("Enter start date yyyy-MM-dd");
             try {
-                courses.get(id).setStartDate(format.parse(scanner.nextLine()));
+                courses.get(id).setStartDate(format.parse(ScannerUntils.scanString("Enter start date yyyy-MM-dd")));
                 changes=true;
                 break;
             }catch (Exception e){

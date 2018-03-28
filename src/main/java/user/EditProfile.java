@@ -1,5 +1,7 @@
 package user;
 
+import menu.extras.ScannerUntils;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,40 +23,35 @@ public class EditProfile {
             System.out.println("1) first name     2) last name     3) password  \n" +
                                "4) date of birth  5) email         6) address   \n" +
                                "7) exit edit menu "                                );
-            String input = scanner.nextLine();
+            String input = ScannerUntils.scanString("");
             switch (Integer.parseInt(input)){
                 case 1:
-                    System.out.println("Enter new name");
-                    users.get(id).setFirstName(scanner.nextLine());
+                    users.get(id).setFirstName(ScannerUntils.scanString("Enter new name"));
                     changes= true;
                     break;
                 case 2:
-                    System.out.println("Enter new last name");
-                    users.get(id).setLastName(scanner.nextLine());
+                    users.get(id).setLastName(ScannerUntils.scanString("Enter new last name"));
                     changes= true;
                     break;
                 case 3:
-                    System.out.println("Enter new password");
-                    users.get(id).setPassword(scanner.nextLine());
+                    users.get(id).setPassword(ScannerUntils.scanString("Enter new password"));
                     changes= true;
                     break;
                 case 4:
-                    setDateOfBirth(id, users, scanner);
+                    setDateOfBirth(id, users);
                     changes= true;
                     break;
                 case 5:
-                    System.out.println("Enter new  email");
-                    users.get(id).setEmail(scanner.nextLine());
+                    users.get(id).setEmail(ScannerUntils.scanString("Enter new  email"));
                     changes= true;
                     break;
                 case 6:
-                    System.out.println("Enter new address");
-                    users.get(id).setAddress(scanner.nextLine());
+                    users.get(id).setAddress(ScannerUntils.scanString("Enter new address"));
                     changes = true;
                     break;
                 case 7:
                     if(changes){
-                        running = saveUsers(users, scanner);
+                        running = saveUsers(users);
                     } else {
                         running = false;
                     }
@@ -66,11 +63,10 @@ public class EditProfile {
         }
     }
 
-    private boolean saveUsers(HashMap<Integer, User> users, Scanner scanner) {
+    private boolean saveUsers(HashMap<Integer, User> users) {
         boolean running;
         while (true){
-            System.out.println("Changes are made, do you want to save? Yes/No");
-            String response = scanner.nextLine();
+            String response = ScannerUntils.scanString("Changes are made, do you want to save? Yes/No");
             if (response.equalsIgnoreCase("yes") || response.equalsIgnoreCase("no")){
                 running = false;
                 if (response.equalsIgnoreCase("yes")){
@@ -89,12 +85,11 @@ public class EditProfile {
         return running;
     }
 
-    private void setDateOfBirth(Integer id, HashMap<Integer, User> users, Scanner scanner) {
+    private void setDateOfBirth(Integer id, HashMap<Integer, User> users) {
         while (true){
-            System.out.println("enter new birth date. Year-Month-day Ex: 2000-10-10");
             try {
                 DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-                Date date = format.parse(scanner.nextLine());
+                Date date = format.parse(ScannerUntils.scanString("enter new birth date. Year-Month-day Ex: 2000-10-10"));
                 users.get(id).setDateOfBirth(date);
                 break;
             }catch (Exception e){

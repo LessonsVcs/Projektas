@@ -2,18 +2,19 @@ package menu;
 
 import cources.Course;
 import cources.ReadWriteCourseRelation;
+import menu.extras.ScannerUntils;
 import user.ReadWriteUserFile;
 import user.User;
 import menu.extras.PrintTable;
 import menu.extras.Roles;
-import menu.extras.UpdateLists;
 import menu.extras.UserInterface;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class MenuForUser extends UpdateLists implements UserInterface {
+import static menu.extras.UpdateLists.*;
+
+public class MenuForUser   implements UserInterface {
     private boolean running = true;
     private String myID;
     private HashMap<Integer,List<String>> courseRealtions = new HashMap<>();
@@ -31,16 +32,15 @@ public class MenuForUser extends UpdateLists implements UserInterface {
     public void menu() {
         while (running) {
 
-            Scanner scanner = new Scanner(System.in);
             System.out.println("Select option");
             System.out.println("1) View all courses      2) Register to course      3) Show my courses     \n" +
                                "4) Change password       5) show my credits         6) Exit    ");
-            selectOperation(scanner);
+            selectOperation(Integer.parseInt(ScannerUntils.scanString("")));
         }
     }
 
-    private void selectOperation(Scanner scanner) {
-        switch (Integer.parseInt(scanner.nextLine())){
+    private void selectOperation(int option) {
+        switch (option){
             case 1:
                 viewCourses();
                 break;
@@ -83,13 +83,11 @@ public class MenuForUser extends UpdateLists implements UserInterface {
         this.users = updateUsers();
         this.courses = updateCourses();
         Date date =  Calendar.getInstance().getTime();
-        Scanner scanner = new Scanner(System.in);
 
         boolean courseFound =  false;
         boolean lecturerFound = false;
         while (true) {
-            System.out.println("Enter person id or exit");
-            String  input = scanner.nextLine();
+            String  input = ScannerUntils.scanString("Enter person id or exit");
             if (input.equalsIgnoreCase("exit")){
                 break;
             }
@@ -135,9 +133,7 @@ public class MenuForUser extends UpdateLists implements UserInterface {
 
     private void changePassword(){
         users = updateUsers();
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter new password");
-        users.get(Integer.parseInt(myID)).setPassword(scanner.nextLine());
+        users.get(Integer.parseInt(myID)).setPassword(ScannerUntils.scanString("Enter new password"));
         ReadWriteUserFile readWriteUserFile = new ReadWriteUserFile();
         readWriteUserFile.setUsers(users);
         readWriteUserFile.writeUserFile();
@@ -157,12 +153,10 @@ public class MenuForUser extends UpdateLists implements UserInterface {
     public void showCourse() {
         this.courses = updateCourses();
         this.users   = updateUsers();
-        Scanner scanner = new Scanner(System.in);
 
         boolean courseFound =  false;
         while (true) {
-            System.out.println("Enter course id or exit");
-            String input = scanner.nextLine();
+            String input = ScannerUntils.scanString("Enter course id or exit");
             if (input.equalsIgnoreCase("exit")){
                 break;
             }

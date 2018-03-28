@@ -9,12 +9,19 @@ public class Course {
     private Date startDate;
     private String credits;
 
+    public Course(){
+
+    }
     public Course(String name, String description, String courseID, Date startDate, String credits){
         this.name = name;
         this.description = description;
         this.courseID = courseID;
         this.startDate = startDate;
         this.credits = credits;
+    }
+
+    public void setCourseID(String courseID) {
+        this.courseID = courseID;
     }
 
     public String getCredits() {

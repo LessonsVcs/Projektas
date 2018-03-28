@@ -16,6 +16,9 @@ public class User {
     private String      personalNumber;
 
 
+    public User(){
+
+    }
     User(String firstName, String lastName, String password, String username, Roles role){
         this.firstName = firstName;
         this.lastName  = lastName;
@@ -34,6 +37,10 @@ public class User {
 
     public String getPersonalNumber() {
         return personalNumber;
+    }
+
+    public void setPersonalNumber(String personalNumber) {
+        this.personalNumber = personalNumber;
     }
 
     public Roles getRole() {

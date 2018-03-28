@@ -1,6 +1,7 @@
 package user;
 
 import menu.extras.Roles;
+import menu.extras.ScannerUntils;
 
 import java.util.HashMap;
 import java.util.Scanner;
@@ -17,9 +18,7 @@ public class Login {
 
     }
     private void checkLogin(){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter username");
-        String username = scanner.nextLine();
+        String username = ScannerUntils.scanString("Enter username");
         if (username.equalsIgnoreCase("exit")){
             return;
         }
@@ -32,10 +31,10 @@ public class Login {
         System.out.println("username doesn't exist");
         checkLogin();
     }
+
     private void checkPassword(Integer i){
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter password");
-        String password = scanner.nextLine();
+
+        String password = ScannerUntils.scanString("Enter password");
         if (password.equalsIgnoreCase("exit")){
             return;
         }
